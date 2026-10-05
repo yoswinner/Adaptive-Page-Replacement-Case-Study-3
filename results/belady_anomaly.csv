@@ -1,0 +1,27 @@
+workload,frame_capacity,page_faults,page_hits,hit_ratio,anomaly_demonstrated,notes
+Classic Belady String (12 refs),3,9,3,0.25,NO,Baseline
+Classic Belady String (12 refs),4,10,2,0.1667,YES,Classic anomaly: capacity 4 yields 10 faults vs 9 faults on capacity 3
+Synthetic high_locality (N=1000),3,798,202,0.202,NO,Monotonic decrease or stable
+Synthetic high_locality (N=1000),4,744,256,0.256,NO,Monotonic decrease or stable
+Synthetic high_locality (N=1000),5,692,308,0.308,NO,Monotonic decrease or stable
+Synthetic high_locality (N=1000),6,645,355,0.355,NO,Monotonic decrease or stable
+Synthetic high_locality (N=1000),7,590,410,0.41,NO,Monotonic decrease or stable
+Synthetic high_locality (N=1000),8,548,452,0.452,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),3,1000,0,0.0,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),4,1000,0,0.0,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),5,995,5,0.005,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),6,989,11,0.011,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),7,982,18,0.018,NO,Monotonic decrease or stable
+Synthetic sequential (N=1000),8,974,26,0.026,NO,Monotonic decrease or stable
+Synthetic random (N=1000),3,940,60,0.06,NO,Monotonic decrease or stable
+Synthetic random (N=1000),4,917,83,0.083,NO,Monotonic decrease or stable
+Synthetic random (N=1000),5,896,104,0.104,NO,Monotonic decrease or stable
+Synthetic random (N=1000),6,876,124,0.124,NO,Monotonic decrease or stable
+Synthetic random (N=1000),7,854,146,0.146,NO,Monotonic decrease or stable
+Synthetic random (N=1000),8,841,159,0.159,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),3,1000,0,0.0,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),4,1000,0,0.0,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),5,1000,0,0.0,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),6,6,994,0.994,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),7,6,994,0.994,NO,Monotonic decrease or stable
+Synthetic looping (N=1000),8,6,994,0.994,NO,Monotonic decrease or stable

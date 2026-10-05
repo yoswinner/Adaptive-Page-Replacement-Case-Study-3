@@ -1,0 +1,6 @@
+algorithm,faults,hits,hit_ratio,expected_faults,status,notes
+FIFO,15,5,0.25,15,PASS,Strict queue-based eviction
+LRU,12,8,0.4,12,PASS,OrderedDict recency order
+Optimal,9,11,0.55,9,PASS,Belady's MIN farthest-future lookahead
+Clock,14,6,0.3,14,PASS,Second-chance circular hand; ref bit cleared on sweep
+LFU,13,7,0.35,13,PASS,Frequency count with FIFO tie-breaker for identical lowest frequency

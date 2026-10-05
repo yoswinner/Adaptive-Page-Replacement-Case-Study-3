@@ -1,0 +1,38 @@
+===========================================================================
+OPERATING SYSTEMS (BCSE303L) EXPERIMENTAL RESULTS SUMMARY
+Case Study: CS3 - Adaptive Page Replacement
+Students: 24BCE0702 (Yash Pradhan) & 24BCE0714 (Anjini Pandey)
+===========================================================================
+
+1. OVERALL ALGORITHM HIT RATIO & TIMING SUMMARY (Across 36 conditions):
+Algorithm       | Mean Hit Ratio  | Std Dev    | Mean Time (ms)  | Time Std (ms)  
+---------------------------------------------------------------------------
+Optimal         |         43.34% |    27.61% |         8.082ms |         8.722ms
+LRU             |         19.45% |    28.09% |         3.507ms |         3.752ms
+Adaptive_W50    |         19.46% |    28.09% |        18.971ms |        19.484ms
+Adaptive_W100   |         19.45% |    28.09% |        16.122ms |        16.861ms
+Clock           |         19.26% |    27.96% |         9.219ms |         9.604ms
+LFU             |         22.87% |    28.88% |        15.816ms |        18.312ms
+FIFO            |         19.10% |    27.83% |         2.392ms |         2.688ms
+
+2. WORKLOAD-SPECIFIC PERFORMANCE (N=5,000, Capacity=5 frames):
+Workload         | LRU Hit%   | Clock Hit%  | LFU Hit%   | Adaptive_W50 Hit%  | Optimal Hit%
+-------------------------------------------------------------------------------------
+high_locality    |    30.84% |     30.12% |    38.34% |            30.84% |      56.66%
+sequential       |     0.76% |      0.72% |     7.00% |             0.76% |      11.38%
+random           |     9.96% |      9.90% |     9.62% |             9.96% |      31.82%
+looping          |     0.00% |      0.00% |     0.00% |             0.00% |      79.92%
+
+Note: 'Std Dev' = population std of hit ratio across the 36 conditions; 'Time Std' = std of the
+per-condition mean times across the 36 conditions (repetition-level std is in summary_results.csv).
+
+3. KEY FINDINGS (computed from results/summary_results.csv):
+- High Locality (N=5000, C=5): best online policy is LFU (38.34%); LRU 30.84%, Adaptive_W50 30.84%, Clock 30.12%, FIFO 30.10%, Optimal 56.66%.
+- Sequential (N=5000, C=5): FIFO/LRU/Clock/Adaptive reach only 0.72%-0.76%; LFU 7.00%; Optimal 11.38%.
+- Uniform Random (N=5000, C=5): online policies 9.62%-9.96%; Optimal 31.82%.
+- Looping (loop size 6): with C=3 and C=5 every online policy scores 0.00% (thrashing); Optimal scores 39.96% (C=3) and 79.92% (C=5) at N=5000. With C=8 every policy reaches >= 99.40% (only 6 compulsory faults).
+- Adaptive_W50 vs LRU: identical fault count in 30/36 conditions, fewer faults in 6, more in 0 (max reduction 6 faults); switches per run: min 0, max 312; 12/36 runs switched at least once.
+- Adaptive_W100 vs LRU: identical fault count in 36/36 conditions, fewer faults in 0, more in 0 (max reduction 0 faults); switches per run: min 0, max 0; 0/36 runs switched at least once.
+- Conditions (of 36) where each online policy has the fewest faults (ties counted for all): FIFO=14, LRU=14, Clock=11, LFU=30, Adaptive_W50=14, Adaptive_W100=14.
+- Belady's Anomaly (FIFO): classic string 1,2,3,4,1,2,5,1,2,3,4,5 gives 9 faults with 3 frames and 10 faults with 4 frames. Synthetic N=1000 traces, frames 3-8: 0 anomalous steps.
+- Runtime (mean over 36 conditions): FIFO 2.392 ms, LRU 3.507 ms, Clock 9.219 ms, LFU 15.816 ms, Adaptive_W50 18.971 ms (5.4x LRU), Adaptive_W100 16.122 ms (4.6x LRU). Pure-Python simulation times, not kernel costs.

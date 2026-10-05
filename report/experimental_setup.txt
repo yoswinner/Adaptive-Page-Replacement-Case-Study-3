@@ -1,0 +1,63 @@
+======================================================================
+OPERATING SYSTEMS (BCSE303L) EXPERIMENTAL ENVIRONMENT REPORT
+Case Study : CS3 - Adaptive Page Replacement
+Semester   : Fall Semester 2026-27
+Students   : 24BCE0702 - Yash Pradhan | 24BCE0714 - Anjini Pandey
+Matrix run : 2026-09-24 13:07:37 (recorded automatically by run_experiments.py)
+Final audit: 2026-10-05 (host details re-queried via Win32_Processor /
+             Win32_OperatingSystem / Win32_ComputerSystem and Python)
+======================================================================
+1. HOST PLATFORM (actual machine, nothing assumed)
+- CPU              : Intel(R) Core(TM) Ultra 7 155H
+                     (16 cores / 22 logical processors, max clock 3800 MHz)
+                     Python platform string: Intel64 Family 6 Model 170 Stepping 4, GenuineIntel
+- Physical Memory  : 16,597,598,208 bytes (15.46 GiB)
+- Operating System : Microsoft Windows 11 Home Single Language, 64-bit
+                     Build 10.0.26200 at matrix run time (2026-09-24);
+                     build 10.0.26300 at final audit (OS updated afterwards;
+                     the experiment results were NOT regenerated)
+- Python           : 3.13.4 (CPython, MSC v.1943 64-bit, AMD64)
+
+2. LIBRARY VERSIONS
+- matplotlib       : 3.11.2  (plots only)
+- numpy            : 2.5.3   (plots/summary statistics only)
+- Simulators use only the Python standard library
+  (collections, statistics, random, time, csv, json).
+
+3. EXPERIMENTAL MATRIX (as executed)
+- Random seed          : 42 (random.Random(42) per workload; deterministic)
+- Workload types (4)   : high_locality, sequential, random, looping
+- Workload sizes (3)   : N = 1,000 / 5,000 / 20,000 references
+- Frame capacities (3) : 3, 5, 8
+- Algorithms (7)       : FIFO, LRU, Optimal, Clock, LFU, Adaptive_W50, Adaptive_W100
+- Repetitions          : 5 per configuration (timing); fault counts are
+                         deterministic and identical in all 5 repetitions
+- Configurations       : 4 x 3 x 3 x 7 = 252  -> results/summary_results.csv
+- Raw runs             : 252 x 5 = 1,260      -> results/raw_results.csv
+- Timing method        : time.perf_counter() around the simulation loop of
+                         one run (workload generation excluded; Optimal's
+                         next-use precomputation included)
+- Timing statistics    : mean, sample std (statistics.stdev), min, max over 5 runs
+
+4. WORKLOAD PARAMETERS (workload/workload_generator.py)
+- high_locality : 50 pages; 80% of references to 10 hot pages (pages 0-9),
+                  20% to 40 cold pages (pages 10-49)
+- sequential    : 50 pages; cyclic scan 0..49 with a 2% chance per reference
+                  of jumping to a random page
+- random        : uniform over 50 pages
+- looping       : cyclic 0,1,2,3,4,5 (loop size 6)
+
+5. ADAPTIVE POLICY PARAMETERS (src/adaptive.py defaults, used unchanged)
+- Window sizes W           : 50 and 100 (rolling deque of past references)
+- Evaluation interval      : when the window is full and step % max(10, W//2) == 0
+                             (every 25 refs for W=50, every 50 refs for W=100)
+- U < 0.35                 -> LRU
+- U >= 0.85                -> Clock
+- CV >= 1.0 and U < 0.70   -> LFU
+- otherwise                -> LRU (initial strategy: LRU)
+
+6. AUXILIARY EXPERIMENTS
+- Textbook validation : 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1 with 3 frames
+- Belady's anomaly    : FIFO on 1,2,3,4,1,2,5,1,2,3,4,5 (3 vs 4 frames) and
+                        FIFO on the four N=1000 workloads with 3..8 frames
+======================================================================

@@ -1,0 +1,34 @@
+{
+  "project": "CS3-Adaptive-Page-Replacement",
+  "course": "BCSE303L - Operating Systems",
+  "semester": "Fall Semester 2026-27",
+  "students": [
+    {
+      "id": "24BCE0702",
+      "name": "Yash Pradhan"
+    },
+    {
+      "id": "24BCE0714",
+      "name": "Anjini Pandey"
+    }
+  ],
+  "random_seed": 42,
+  "workload_sizes": [1000, 5000, 20000],
+  "frame_capacities": [3, 5, 8],
+  "workload_types": ["high_locality", "sequential", "random", "looping"],
+  "algorithms": ["FIFO", "LRU", "Optimal", "Clock", "LFU", "Adaptive_W50", "Adaptive_W100"],
+  "adaptive_policy": {
+    "window_size": 50,
+    "candidate_window_sizes": [50, 100],
+    "locality_threshold_U": 0.35,
+    "scan_threshold_U": 0.85,
+    "frequency_skew_threshold": 1.0,
+    "lfu_max_U": 0.70,
+    "initial_strategy": "LRU",
+    "evaluation_interval": "every max(10, W // 2) references, once the window is full"
+  },
+  "reproducibility": {
+    "repetitions": 5,
+    "note": "Descriptive record of the executed configuration; values mirror the constants in experiments/run_experiments.py and the defaults of src/adaptive.py."
+  }
+}
