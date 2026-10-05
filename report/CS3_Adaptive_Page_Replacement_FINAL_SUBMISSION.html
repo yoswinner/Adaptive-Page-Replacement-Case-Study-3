@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CS3 — Adaptive Page Replacement FINAL SUBMISSION</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a2e;
+    --accent: #16213e;
+    --link: #0f3460;
+    --code-bg: #f4f4f8;
+    --table-header: #16213e;
+    --table-header-fg: #ffffff;
+    --table-stripe: #f8f9fa;
+    --border: #dee2e6;
+    --caption: #555;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 1.72;
+    color: var(--fg);
+    background: var(--bg);
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+  }
+  h1 { font-size: 1.9rem; margin: 48px 0 8px; color: var(--accent); border-bottom: 3px solid var(--accent); padding-bottom: 8px; }
+  h2 { font-size: 1.45rem; margin: 40px 0 12px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 1.15rem; margin: 28px 0 8px; color: var(--accent); }
+  p { margin: 10px 0; text-align: justify; }
+  ul, ol { margin: 8px 0 8px 28px; }
+  li { margin: 4px 0; }
+  a { color: var(--link); }
+  code {
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: 0.88em;
+    background: var(--code-bg);
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    padding: 16px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.85em;
+    line-height: 1.55;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.92em;
+  }
+  th {
+    background: var(--table-header);
+    color: var(--table-header-fg);
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:nth-child(even) td { background: var(--table-stripe); }
+  .cover {
+    text-align: left;
+    padding: 16px 0 24px;
+    border-bottom: 3px solid var(--accent);
+    margin-bottom: 32px;
+  }
+  .cover h1 { border: none; font-size: 1.8rem; margin: 0 0 8px; padding-bottom: 0; }
+  .cover h2 { border: none; font-size: 1.2rem; color: #555; margin: 0 0 16px; padding-bottom: 0; font-weight: 400; }
+  .figure {
+    margin: 24px 0;
+    text-align: center;
+  }
+  .figure img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+  .figure .caption {
+    font-size: 0.88em;
+    color: var(--caption);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  @media print {
+    body { max-width: 100%; padding: 0; font-size: 10pt; }
+    h2 { page-break-before: auto; }
+    pre { font-size: 8pt; }
+    table { font-size: 8pt; }
+    .figure img { max-width: 85%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>Adaptive Page Replacement Based on Memory-Reference Locality</h1>
+  <h2>Fall Semester 2026-27 | Case Study: CS3</h2>
+  <div style="font-size: 0.95rem; color: #444; line-height: 1.9;">
+    <strong>Students:</strong> Yash Pradhan (24BCE0702), Anjini Pandey (24BCE0714)<br>
+    <strong>Course:</strong> BCSE303L – Operating Systems<br>
+    <strong>Date:</strong> October 2026
+  </div>
+</div>
+
+<h2>1. Abstract</h2>
+<p>Virtual memory systems rely on page replacement policies to decide which resident page to evict during a page fault. Classic algorithms (FIFO, LRU, LFU, Clock) make fixed assumptions about program behavior that can fail when workload access patterns change. In this case study, we implemented and evaluated an online <strong>Adaptive Page Replacement</strong> policy that detects memory-reference locality within a rolling window. It switches between LRU, Clock, and LFU heuristics without looking ahead at future references.</p>
+<p>We tested five baseline algorithms (FIFO, LRU, Optimal, Clock, LFU) and two adaptive configurations (W=50 and W=100) across 1,260 experimental runs covering 252 unique configurations (4 workloads × 3 sizes × 3 capacities). The adaptive engine successfully detected sequential scans and preserved frames across policy transitions. However, our fixed thresholds did not always match the workload statistics. Adaptive W50 matched LRU in 30 of 36 conditions, while LFU performed best among the online policies on high-locality workloads (38.34% vs. 30.84% hit ratio). Our results show that the adaptive approach can make policy decisions using only past references, but its performance depends strongly on how the thresholds are chosen.</p>
+
+<h2>2. Introduction & Problem Statement</h2>
+<p>When physical memory frames are full, the OS must choose a page to evict. Fixed policies assume a single type of program behavior, which leads to more page faults when workloads shift—for example, moving from a tight loop to a sequential scan.</p>
+<p><strong>Research Question:</strong> <em>"Can an adaptive page-replacement policy select an appropriate strategy according to observed memory-reference locality?"</em></p>
+<p>Adaptive selection aims to improve performance by matching the replacement rule to the current phase of execution. The main challenges are identifying this phase using only past history, managing the internal state during transitions, and keeping overhead low.</p>
+
+<h2>3. Objectives</h2>
+<ol>
+  <li>Implement FIFO, LRU, Optimal, Clock, and LFU page replacement algorithms.</li>
+  <li>Develop a causal adaptive mechanism based on a rolling observation window.</li>
+  <li>Validate all algorithms against a standard textbook reference string.</li>
+  <li>Test performance across four synthetic workloads (High Locality, Sequential, Random, Looping) at varying sizes (N) and frame capacities (C).</li>
+  <li>Compare adaptive and fixed policies statistically using page faults, hit ratio, and execution time.</li>
+</ol>
+
+<h2>4. Algorithms</h2>
+<ul>
+  <li><strong>FIFO (First-In, First-Out):</strong> Evicts the oldest page.</li>
+  <li><strong>LRU (Least Recently Used):</strong> Evicts the page whose most recent access is oldest, taking advantage of temporal locality.</li>
+  <li><strong>Optimal (Belady's MIN):</strong> Evicts the page needed furthest in the future. This requires complete future knowledge, so it serves only as a theoretical best-case baseline.</li>
+  <li><strong>Clock (Second-Chance):</strong> Approximates LRU using a circular buffer and reference bits.</li>
+  <li><strong>LFU (Least Frequently Used):</strong> Evicts the page with the lowest reference frequency, breaking ties using the FIFO arrival order.</li>
+</ul>
+
+<h2>5. Adaptive Mechanism</h2>
+<p>Our adaptive engine tracks recent page references in a rolling <code>deque</code> of size W. It evaluates two metrics:</p>
+<ul>
+  <li><strong>Unique Page Ratio (U):</strong> U = |unique pages in W| / W.</li>
+  <li><strong>Frequency Coefficient of Variation (CV):</strong> Relative dispersion of access frequencies, computed as standard deviation divided by mean.</li>
+</ul>
+<p><strong>Decision Rules:</strong></p>
+<pre><code>if u_ratio < 0.35:
+    selected = "LRU"    # Strong temporal locality
+elif u_ratio >= 0.85:
+    selected = "Clock"  # Sequential scan
+elif cv_f >= 1.0 and u_ratio < 0.70:
+    selected = "LFU"    # Skewed popularity
+else:
+    selected = "LRU"    # Default
+</code></pre>
+<p>The engine evaluates metrics every <code>max(10, W // 2)</code> steps.</p>
+
+<p><strong>Adaptive State Handover:</strong><br>
+When the engine switches policies, the physical resident set itself is NOT flushed. Instead, auxiliary metadata is reconstructed:</p>
+<ul>
+  <li><strong>Switch to LRU:</strong> Resident pages are ordered using their last occurrence in the history window.</li>
+  <li><strong>Switch to LFU:</strong> Page frequencies are initialized directly from the observation window.</li>
+  <li><strong>Switch to Clock:</strong> Reference bits are initialized to 1 and the hand is reset to 0.</li>
+</ul>
+
+<p><strong>Causality Guarantee:</strong><br>
+The adaptive decision is made before the current reference is appended to the observation window. A causality test mutates future references and verifies that adaptive decisions before the mutation point remain unchanged.</p>
+
+<h2>6. Workloads and Experimental Setup</h2>
+<p><strong>Workload Types:</strong></p>
+<ol>
+  <li><strong>High Locality:</strong> Pareto 80/20 distribution (80% accesses to 10 hot pages).</li>
+  <li><strong>Sequential:</strong> Cyclic scan with 2% random jumps.</li>
+  <li><strong>Random:</strong> Uniform access over all pages.</li>
+  <li><strong>Looping:</strong> Fixed loop of 6 pages to test thrashing.</li>
+</ol>
+
+<p><strong>Experimental Configuration Matrix:</strong></p>
+<ul>
+  <li><strong>Workloads:</strong> High Locality, Sequential, Random, Looping</li>
+  <li><strong>N (references):</strong> 1,000; 5,000; 20,000</li>
+  <li><strong>Frames:</strong> 3, 5, 8</li>
+  <li><strong>Algorithms:</strong> FIFO, LRU, Optimal, Clock, LFU, Adaptive W50, Adaptive W100</li>
+  <li><strong>Timing repetitions:</strong> 5 per configuration</li>
+  <li><strong>Total unique configurations:</strong> 252</li>
+  <li><strong>Total experimental runs:</strong> 1,260</li>
+  <li><strong>Random seed:</strong> 42</li>
+</ul>
+
+<p><strong>Experimental Environment:</strong></p>
+<table>
+  <tr><th>Component</th><th>Specification</th></tr>
+  <tr><td>CPU</td><td>Intel Core Ultra 7 155H</td></tr>
+  <tr><td>RAM</td><td>16 GB</td></tr>
+  <tr><td>OS</td><td>Windows 11, 64-bit</td></tr>
+  <tr><td>Python</td><td>CPython 3.13.4</td></tr>
+  <tr><td>Libraries</td><td>matplotlib 3.11.2, numpy 2.5.3</td></tr>
+</table>
+
+<h2>7. Validation and Testing</h2>
+<p>We wrote a test suite of 29 unit tests to verify our implementations.</p>
+
+<table>
+  <tr><th>Test File</th><th>Tests</th><th>Key Focus</th></tr>
+  <tr><td>FIFO</td><td>5</td><td>Queue order</td></tr>
+  <tr><td>LRU</td><td>4</td><td>Recency updates</td></tr>
+  <tr><td>Optimal</td><td>3</td><td>Farthest future lookahead</td></tr>
+  <tr><td>Clock</td><td>4</td><td>Reference bit semantics</td></tr>
+  <tr><td>LFU</td><td>4</td><td>FIFO tie-breaking</td></tr>
+  <tr><td>Adaptive</td><td>9</td><td>causality, scan→Clock, locality→LRU</td></tr>
+  <tr><td><strong>Total</strong></td><td><strong>29</strong></td><td></td></tr>
+</table>
+
+<p>Textbook validation was performed on the standard 20-reference string with 3 frames:</p>
+<table>
+  <tr><th>Algorithm</th><th>Faults</th><th>Hit Ratio</th><th>Expected</th><th>Status</th></tr>
+  <tr><td>FIFO</td><td>15</td><td>25.00%</td><td>15</td><td>PASS</td></tr>
+  <tr><td>LRU</td><td>12</td><td>40.00%</td><td>12</td><td>PASS</td></tr>
+  <tr><td>Optimal</td><td>9</td><td>55.00%</td><td>9</td><td>PASS</td></tr>
+  <tr><td>Clock</td><td>14</td><td>30.00%</td><td>14</td><td>PASS</td></tr>
+  <tr><td>LFU</td><td>13</td><td>35.00%</td><td>13</td><td>PASS</td></tr>
+</table>
+
+<h2>8. Results and Discussion</h2>
+
+<h3>Page Faults</h3>
+<p>LFU had the fewest faults among the online policies for high-locality workloads because it effectively protected the "hot" pages. Adaptive W50 matched LRU in 30 out of 36 configurations, achieving slightly fewer faults in the remaining 6. It was never worse than LRU.</p>
+
+<p>Below are representative page-fault results across the workload classes for N=5,000 and 5 frames (8 frames for Looping):</p>
+<table>
+  <tr><th>Workload</th><th>N</th><th>Frames</th><th>FIFO</th><th>LRU</th><th>Optimal</th><th>Clock</th><th>LFU</th><th>Adap W50</th><th>Adap W100</th></tr>
+  <tr><td>High Locality</td><td>5000</td><td>5</td><td>3495</td><td>3458</td><td>2167</td><td>3494</td><td>3083</td><td>3458</td><td>3458</td></tr>
+  <tr><td>Sequential</td><td>5000</td><td>5</td><td>4964</td><td>4962</td><td>4431</td><td>4964</td><td>4650</td><td>4962</td><td>4962</td></tr>
+  <tr><td>Random</td><td>5000</td><td>5</td><td>4505</td><td>4502</td><td>3409</td><td>4505</td><td>4519</td><td>4502</td><td>4502</td></tr>
+  <tr><td>Looping</td><td>5000</td><td>5</td><td>5000</td><td>5000</td><td>1004</td><td>5000</td><td>5000</td><td>5000</td><td>5000</td></tr>
+  <tr><td>Looping</td><td>5000</td><td>8</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td><td>6</td></tr>
+</table>
+
+<p>Under the random workload, LRU slightly outperformed LFU (4,502 vs. 4,519 faults), which is consistent with the lack of persistent hot pages in a uniform access pattern.</p>
+
+<p>For the high-locality (N=5000, C=5) configuration shown above, LFU achieved a 38.34% hit ratio. LRU, Adaptive W50, and Adaptive W100 all reached a 30.84% hit ratio, while Optimal achieved 56.66%.</p>
+
+<div class="figure">
+  <img src="../plots/hit_ratio_vs_algorithm.png" alt="Hit Ratio vs Algorithm">
+  <div class="caption">Figure 1: Hit Ratio vs Algorithm (High Locality, N=5,000, Frames=5).</div>
+</div>
+
+<div class="figure">
+  <img src="../plots/adaptive_vs_fixed_policies.png" alt="Adaptive vs Fixed Policies">
+  <div class="caption">Figure 2: Adaptive vs Fixed Policies across all workloads.</div>
+</div>
+
+<h3>Adaptive Behavior</h3>
+<p>For sequential workloads (N=20,000, W=50), the adaptive engine made 312 total policy transitions, consisting of 156 transitions to Clock and 156 transitions back to LRU. This oscillation happened because the 2% random jumps briefly dropped the U ratio below the 0.85 threshold.</p>
+
+<p>For high-locality windows, the classifier typically selected LRU through the first U-ratio condition before the LFU rule could be reached. The observed CV of about 0.97 also remained below the LFU threshold of 1.0.</p>
+
+<p>There are 50 possible pages in the workload generator. With W=100, the maximum possible unique-page ratio is therefore 50/100 = 0.50, so the U >= 0.85 Clock condition is unreachable for W100. For high-locality windows, the U < 0.35 condition is evaluated before the LFU condition, so LRU is selected whenever the window is classified as strongly local. As a result, Adaptive W100 selected LRU across all 36 W100 configurations.</p>
+
+<div class="figure">
+  <img src="../plots/adaptive_behavior_by_workload.png" alt="Adaptive Behavior by Workload">
+  <div class="caption">Figure 3: Adaptive W50 Behavior (N=5,000, Frames=5). Sequential workloads triggered transitions, but hit ratios remained unaffected.</div>
+</div>
+
+<h3>Overall Hit Ratio and Execution Time</h3>
+<p>Across the full 36-condition summary, Optimal gave the highest mean hit ratio, while FIFO and LRU had the lowest execution overhead. The adaptive variants remained close to LRU in hit ratio but added substantial computational cost.</p>
+
+<table>
+  <tr><th>Algorithm</th><th>Mean Hit Ratio</th><th>Mean Execution Time (ms)</th></tr>
+  <tr><td>Optimal</td><td>43.34%</td><td>8.082</td></tr>
+  <tr><td>LFU</td><td>22.87%</td><td>15.816</td></tr>
+  <tr><td>LRU</td><td>19.45%</td><td>3.507</td></tr>
+  <tr><td>Adaptive W50</td><td>19.46%</td><td>18.971</td></tr>
+  <tr><td>Adaptive W100</td><td>19.45%</td><td>16.122</td></tr>
+  <tr><td>Clock</td><td>19.26%</td><td>9.219</td></tr>
+  <tr><td>FIFO</td><td>19.10%</td><td>2.392</td></tr>
+</table>
+
+<p>Statistical observation: Page-fault counts were deterministic across the five repetitions for each configuration, so their standard deviation was 0. Execution time was measured across the five repetitions and summarized using the mean; variation was retained in the timing plots where applicable.</p>
+
+<p>Execution time increased approximately linearly over the tested workload sizes. The adaptive engines introduced significant overhead: Adaptive W50 took ≈ 5.4× the execution time of LRU, while W100 took ≈ 4.6× LRU due to frequency counting and variance calculations on the rolling window.</p>
+
+<div class="figure">
+  <img src="../plots/execution_time_vs_algorithm.png" alt="Execution Time vs Algorithm">
+  <div class="caption">Figure 4: Execution Time overhead (High Locality, N=20,000, Frames=8).</div>
+</div>
+
+<h3>Belady's Anomaly</h3>
+<p>We reproduced Belady's Anomaly using a classic textbook string, where FIFO faults increased from 9 faults with 3 frames to 10 faults with 4 frames. However, across our synthetic workload simulations, we did not observe the anomaly; faults decreased monotonically as frames increased.</p>
+
+<h2>9. Limitations</h2>
+<ol>
+  <li><strong>Heuristic Calibration:</strong> The manual U and CV thresholds were slightly misaligned with the actual workload statistics. For instance, LFU was never selected for high-locality workloads despite being the best-performing fixed online policy in the tested high-locality configurations.</li>
+  <li><strong>Simulation Overhead:</strong> Time measurements reflect Python interpreter costs rather than kernel-level execution or hardware MMU support.</li>
+  <li><strong>Workload Scope:</strong> We tested specific synthetic access patterns, whereas real-world traces often exhibit more complex phase behavior.</li>
+</ol>
+
+<h2>10. Contributions</h2>
+<ul>
+  <li><strong>Yash Pradhan (24BCE0702):</strong> Implemented FIFO, LRU, Optimal; created their unit tests; designed the workload generator logic.</li>
+  <li><strong>Anjini Pandey (24BCE0714):</strong> Implemented Clock, LFU, Adaptive engine; developed causal unit tests; executed batch runs; wrote statistical aggregator and plotting pipeline.</li>
+</ul>
+
+<h2>11. Conclusion</h2>
+<p>Our adaptive engine successfully tracked memory-reference phases and handled state transitions causally without flushing physical frames. However, because the U < 0.35 locality condition is checked before the LFU condition, the adaptive policy predominantly defaulted to LRU on strongly local windows. The observed CV of about 0.97 was also below the LFU threshold of 1.0. Consequently, LFU remained the superior fixed policy for skewed access patterns. We conclude that while adaptive page replacement can effectively switch logic on the fly, its practical advantage is entirely dependent on precise, workload-specific threshold calibration.</p>
+
+<h2>12. Repository and Reproducibility</h2>
+<p><strong>GitHub Repository:</strong> <a href="https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3">https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3</a></p>
+<p>This project was designed, implemented, tested, and evaluated as part of our coursework, and all reported numerical results were generated directly from the project's experimental implementation.</p>
+
+<h2>13. References</h2>
+<ol>
+  <li>Silberschatz, A., Galvin, P. B., Gagne, G. <em>Operating System Concepts</em>, 10th ed., Wiley, 2018.</li>
+  <li>Belady, L. A., Nelson, R. A., Shedler, G. S. "An anomaly in space-time characteristics of certain programs running in a paging machine," <em>CACM</em>, 1969.</li>
+  <li>Denning, P. J. "The working set model for program behavior," <em>CACM</em>, 1968.</li>
+</ol>
+
+</body>
+</html>
