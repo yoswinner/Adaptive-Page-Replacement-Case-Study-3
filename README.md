@@ -106,11 +106,16 @@ CS3-Adaptive-Page-Replacement/
 │   ├── frame_capacity_effect.png
 │   └── adaptive_window_effect.png
 ├── report/
-│   ├── CS3_Adaptive_Page_Replacement_Summary_Report.pdf  # Submitted concise summary report (8 pages)
+│   ├── CS3_Adaptive_Page_Replacement_Summary_Report.pdf          # Submitted concise summary report (8 pages)
 │   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf # Full comprehensive academic report (22 pages)
-│   ├── experimental_setup.txt       # Host hardware & environment telemetry
-│   ├── result_summary.txt           # Statistical summary and findings
-│   └── report_outline.md            # Complete academic report outline
+│   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report.md     # Comprehensive report source markdown
+│   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report.html   # Comprehensive report styled HTML
+│   ├── CS3_Adaptive_Page_Replacement_FINAL_SUBMISSION.md         # Submission report source markdown
+│   ├── CS3_Adaptive_Page_Replacement_FINAL_SUBMISSION.html       # Submission report styled HTML
+│   ├── final_report.md                                           # Extended study report draft
+│   ├── report_outline.md                                         # Academic report outline
+│   ├── experimental_setup.txt                                    # Host hardware & environment telemetry
+│   └── result_summary.txt                                        # Statistical summary and findings
 ├── CONTRIBUTIONS.md                 # Individual student responsibilities
 ├── README.md                        # Project documentation and guide
 └── requirements.txt                 # Dependencies (matplotlib, numpy, pandas, pytest)
@@ -136,6 +141,7 @@ All steps are automated and fully reproducible from the project root (`CS3-Adapt
 Verifies all 29 test cases across edge cases, invariants, and causal bounds:
 ```bash
 python -m unittest discover -s tests -v
+# Alternatively: python -m pytest -v
 ```
 
 ### Step 2: Run Textbook Baseline Validation
@@ -180,6 +186,6 @@ python experiments/analyze_results.py
 ## 8. Summary of Experimental Findings
 
 1. **Locality Responsiveness**: In High-Locality workloads, Adaptive autonomously classified $U < 0.35$ and converged to LRU, matching LRU's hit ratio (~30.8% at $N=5,000, C=5$) without prior knowledge.
-2. **Thrashing Diagnostics**: In looping workloads with working set size $L=6$, physical frame capacities $C \le 5$ suffered complete thrashing (0.0% hit ratio). When capacity expanded to $C \ge 6$, hit ratio jumped to 99.4%, confirming working set model predictions.
+2. **Thrashing Diagnostics**: In looping workloads with working set size $L=6$, physical frame capacities $C \le 5$ suffered complete thrashing (0.0% hit ratio). When capacity expanded to $C = 8$, hit ratio reached 99.40% ($N=1,000$) to 99.88% ($N=20,000$), confirming working set model predictions.
 3. **Belady's Anomaly**: Verified on the classic 12-reference string (9 faults on 3 frames vs 10 faults on 4 frames in FIFO).
-4. **Computational Feasibility**: Adaptive introduces a modest statistical calculation overhead (~20 ms for 20,000 accesses), running within real-time limits without oracle lookahead.
+4. **Computational Feasibility & Overhead**: Adaptive introduces statistical calculation overhead (~16–19 ms for 20,000 accesses, 4.6×–5.4× standalone LRU in Python simulation) while maintaining strict online causality without future lookahead.
