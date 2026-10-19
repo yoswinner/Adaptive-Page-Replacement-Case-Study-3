@@ -1,4 +1,4 @@
-<![CDATA[# ADAPTIVE PAGE REPLACEMENT BASED ON MEMORY-REFERENCE LOCALITY
+# ADAPTIVE PAGE REPLACEMENT BASED ON MEMORY-REFERENCE LOCALITY
 ## An Experimental Evaluation of FIFO, LRU, Optimal, Clock, LFU, and an Online Adaptive Policy
 
 ---
@@ -382,15 +382,16 @@ CS3-Adaptive-Page-Replacement/
 │   ├── frame_capacity_effect.png
 │   └── adaptive_window_effect.png
 ├── report/
+│   ├── CS3_Adaptive_Page_Replacement_Summary_Report.pdf  # Submitted concise summary report (8 pages)
+│   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf # Full comprehensive academic report (22 pages)
 │   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report.md
 │   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report.html
 │   ├── experimental_setup.txt       # Host hardware & environment telemetry
 │   ├── result_summary.txt           # Statistical summary of findings
-│   ├── validation_table.csv         # Formatted validation table
 │   └── report_outline.md            # Report structure outline
 ├── CONTRIBUTIONS.md                 # Individual student responsibilities
 ├── README.md                        # Project documentation and guide
-└── requirements.txt                 # Dependencies (matplotlib, numpy)
+└── requirements.txt                 # Dependencies (matplotlib, numpy, pandas, pytest)
 ```
 
 ---
@@ -1363,4 +1364,3 @@ for rep in range(1, REPETITIONS + 1):
 ---
 
 *End of Report*
-]]>

@@ -111,18 +111,6 @@ def run_textbook_validation():
         writer.writeheader()
         for r in results:
             writer.writerow(r)
-
-    # Save also to report/validation_table.csv
-    report_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "report"))
-    os.makedirs(report_dir, exist_ok=True)
-    report_csv_path = os.path.join(report_dir, "validation_table.csv")
-    with open(report_csv_path, mode="w", newline="", encoding="utf-8") as f:
-        fieldnames = ["algorithm", "faults", "hits", "hit_ratio", "expected_faults", "status", "notes"]
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        for r in results:
-            writer.writerow(r)
-
     print("=" * 70)
     print("TEXTBOOK VALIDATION RESULTS (String length: 20, Frames: 3)")
     print("=" * 70)

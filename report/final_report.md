@@ -87,7 +87,7 @@ So a switch causes no extra faults by itself. Only later eviction decisions chan
 
 **Matrix:** 4 workloads × 3 N × 3 frame counts × 7 policies = **252 configurations**, each repeated **5 times**, giving **1,260 runs**, all with seed 42. Fault counts are deterministic and were identical in all 5 repetitions. The repetitions give timing statistics (mean, sample std, min, max). The audit confirmed that faults + hits = N and hit_ratio = hits/N in every row, that there are no missing or duplicate configurations, and that every summary timing statistic matches the raw data exactly. Re-simulating all 252 configurations with the current code reproduced every fault count in the CSV.
 
-**Textbook validation:** reference string 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1 with 3 frames (`report/validation_table.csv`).
+**Textbook validation:** reference string 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1 with 3 frames (`results/validation_results.csv`).
 
 | Policy | Faults | Hits | Hit ratio | Expected | Status |
 |---|---|---|---|---|---|

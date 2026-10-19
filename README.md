@@ -108,13 +108,12 @@ CS3-Adaptive-Page-Replacement/
 ├── report/
 │   ├── CS3_Adaptive_Page_Replacement_Summary_Report.pdf  # Submitted concise summary report (8 pages)
 │   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf # Full comprehensive academic report (22 pages)
-│   ├── validation_table.csv         # Formatted validation table
 │   ├── experimental_setup.txt       # Host hardware & environment telemetry
 │   ├── result_summary.txt           # Statistical summary and findings
 │   └── report_outline.md            # Complete academic report outline
 ├── CONTRIBUTIONS.md                 # Individual student responsibilities
 ├── README.md                        # Project documentation and guide
-└── requirements.txt                 # Dependencies (matplotlib, numpy)
+└── requirements.txt                 # Dependencies (matplotlib, numpy, pandas, pytest)
 ```
 
 ---
