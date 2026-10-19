@@ -7,6 +7,10 @@
 
 **GitHub Repository:** [https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3](https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3)
 
+### Project Reports:
+- **Submitted Summary Report (8 pages):** [`report/CS3_Adaptive_Page_Replacement_Summary_Report.pdf`](report/CS3_Adaptive_Page_Replacement_Summary_Report.pdf)
+- **Comprehensive Academic Report (22 pages):** [`report/CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf`](report/CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf)
+
 ---
 
 ## 1. Project Overview & Research Question
@@ -102,10 +106,12 @@ CS3-Adaptive-Page-Replacement/
 │   ├── frame_capacity_effect.png
 │   └── adaptive_window_effect.png
 ├── report/
+│   ├── CS3_Adaptive_Page_Replacement_Summary_Report.pdf  # Submitted concise summary report (8 pages)
+│   ├── CS3_Adaptive_Page_Replacement_Comprehensive_Report_FINAL.pdf # Full comprehensive academic report (22 pages)
 │   ├── validation_table.csv         # Formatted validation table
 │   ├── experimental_setup.txt       # Host hardware & environment telemetry
 │   ├── result_summary.txt           # Statistical summary and findings
-│   └── report_outline.md            # Complete 8-page academic report outline
+│   └── report_outline.md            # Complete academic report outline
 ├── CONTRIBUTIONS.md                 # Individual student responsibilities
 ├── README.md                        # Project documentation and guide
 └── requirements.txt                 # Dependencies (matplotlib, numpy)
