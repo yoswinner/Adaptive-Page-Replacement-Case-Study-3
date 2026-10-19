@@ -208,7 +208,13 @@ Details are in `CONTRIBUTIONS.md`.
 
 We implemented and validated five classic replacement policies (FIFO 15, LRU 12 and Optimal 9 faults on the textbook string) and a strictly causal adaptive policy that switches among LRU, LFU and Clock using a rolling-window unique-page ratio and a frequency coefficient of variation. The policy keeps the resident frames when it switches. Across 252 configurations (1,260 runs) the adaptive policy was never worse than LRU in faults. It recognised scan phases with W=50, but it improved on LRU by at most 6 faults, and with W=100 it was identical to LRU. LFU was the strongest online policy on both skewed and scan workloads, and Optimal showed a large remaining gap (43.34 % vs 22.87 % mean hit ratio). The adaptive policy also cost 4.6–5.4× LRU's simulation time. **Adaptivity alone is not enough. The decision thresholds have to match the locality metrics the workloads actually produce, and switching is only worth it when the candidate policies behave differently on the detected pattern.** Next steps are threshold calibration, phase-changing workloads and adding scan-resistant candidates.
 
-## 12. References
+## 12. Repository and Reproducibility
+
+**GitHub Repository:** [https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3](https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3)
+
+All project code, workload generators, configuration files, and raw CSV files are organized in the GitHub repository. The full experimental study can be reproduced following the commands in `README.md`.
+
+## 13. References
 
 1. A. Silberschatz, P. B. Galvin, G. Gagne, *Operating System Concepts*, 10th ed., Wiley, 2018 (Ch. 10, Virtual Memory).
 2. L. A. Belady, "A study of replacement algorithms for a virtual-storage computer," *IBM Systems Journal*, 5(2), 78–101, 1966.

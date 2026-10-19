@@ -5,6 +5,8 @@
 1. **24BCE0702 – Yash Pradhan**
 2. **24BCE0714 – Anjini Pandey**
 
+**GitHub Repository:** [https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3](https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3)
+
 ---
 
 ## 1. Project Overview & Research Question
@@ -22,12 +24,12 @@ This project implements an **online, strictly causal Adaptive Page Replacement a
 
 | Algorithm | Implementation File | Key Operational Mechanics |
 | :--- | :--- | :--- |
-| **FIFO** | [`src/fifo.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/fifo.py) | Strict queue-based eviction order; evicts the oldest resident page. |
-| **LRU** | [`src/lru.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/lru.py) | Uses an `OrderedDict` for $O(1)$ recency promotion and least-recent eviction. |
-| **Optimal (MIN)** | [`src/optimal.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/optimal.py) | Belady's theoretical offline lookahead (evicts page whose next access is farthest). Serves as an unachievable benchmark lower bound. |
-| **Clock (Second-Chance)** | [`src/clock.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/clock.py) | Circular frame buffer with reference bits. Clears bits on sweep and evicts the first page with bit 0. |
-| **LFU** | [`src/lfu.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/lfu.py) | Tracks reference counts of resident pages; deterministic FIFO arrival-order tie-breaker. |
-| **Adaptive** | [`src/adaptive.py`](file:///C:/Users/ANJINI%20PANDEY/.gemini/antigravity-ide/scratch/CS3-Adaptive-Page-Replacement/src/adaptive.py) | Causal sliding-window locality classifier ($U, CV_f$); non-destructive state handover. |
+| **FIFO** | [`src/fifo.py`](src/fifo.py) | Strict queue-based eviction order; evicts the oldest resident page. |
+| **LRU** | [`src/lru.py`](src/lru.py) | Uses an `OrderedDict` for $O(1)$ recency promotion and least-recent eviction. |
+| **Optimal (MIN)** | [`src/optimal.py`](src/optimal.py) | Belady's theoretical offline lookahead (evicts page whose next access is farthest). Serves as an unachievable benchmark lower bound. |
+| **Clock (Second-Chance)** | [`src/clock.py`](src/clock.py) | Circular frame buffer with reference bits. Clears bits on sweep and evicts the first page with bit 0. |
+| **LFU** | [`src/lfu.py`](src/lfu.py) | Tracks reference counts of resident pages; deterministic FIFO arrival-order tie-breaker. |
+| **Adaptive** | [`src/adaptive.py`](src/adaptive.py) | Causal sliding-window locality classifier ($U, CV_f$); non-destructive state handover. |
 
 ---
 
@@ -126,7 +128,7 @@ pip install -r requirements.txt
 All steps are automated and fully reproducible from the project root (`CS3-Adaptive-Page-Replacement/`):
 
 ### Step 1: Run Unit Tests
-Verifies all 28 test cases across edge cases, invariants, and causal bounds:
+Verifies all 29 test cases across edge cases, invariants, and causal bounds:
 ```bash
 python -m unittest discover -s tests -v
 ```

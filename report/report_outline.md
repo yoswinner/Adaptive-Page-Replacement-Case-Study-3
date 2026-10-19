@@ -139,9 +139,13 @@ Validation was executed against the classic Silberschatz textbook reference trac
 ### 13. Conclusion
 This case study demonstrates that an online, causal adaptive page-replacement policy can successfully detect memory-reference locality using sliding-window metrics ($U, CV_f$) without future lookahead. The adaptive mechanism dynamically converges to appropriate policies while preserving resident physical frames across strategy transitions.
 
+### 14. Repository and Reproducibility
+- **GitHub Repository:** [https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3](https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3)
+- Contains complete source code, workload generators, configuration files, and raw CSV experimental data.
+
 ---
 
-### 14. References
+### 15. References
 1. A. Silberschatz, P. B. Galvin, and G. Gagne, *Operating System Concepts*, 10th ed. Wiley, 2018.
 2. L. A. Belady, "A study of replacement algorithms for a virtual-storage computer," *IBM Systems Journal*, vol. 5, no. 2, pp. 78–101, 1966.
 3. A. S. Tanenbaum and H. Bos, *Modern Operating Systems*, 4th ed. Pearson, 2015.

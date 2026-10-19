@@ -1100,6 +1100,8 @@ The adaptive engine rarely selects LFU for high-locality workloads because the d
 
 The complete experiment can be identically reproduced using the following steps, executed from the project root directory (`CS3-Adaptive-Page-Replacement/`):
 
+**GitHub Repository:** [https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3](https://github.com/yoswinner/Adaptive-Page-Replacement-Case-Study-3)
+
 ### Step 1: Environment Setup
 
 ```bash
